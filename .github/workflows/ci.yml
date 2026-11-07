@@ -31,6 +31,6 @@ jobs:
         run: npm run package
       - uses: actions/upload-artifact@v4
         with:
-          name: bookmark-vsix
+          name: hashmark-vsix
           path: "*.vsix"
           if-no-files-found: error

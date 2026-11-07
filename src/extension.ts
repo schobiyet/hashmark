@@ -39,7 +39,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
   const memento = mementoStorage(ctx.workspaceState);
   const store = new Store(memento.read(), memento);
   const tree = new Tree(store);
-  const view = vscode.window.createTreeView('bookmark.view', {
+  const view = vscode.window.createTreeView('hashmark.view', {
     treeDataProvider: tree,
   });
   const syncMessage = () => {
@@ -48,7 +48,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
   ctx.subscriptions.push(store, store.onChange(syncMessage));
 
   const reg = <A extends unknown[]>(id: string, fn: (...args: A) => unknown) =>
-    ctx.subscriptions.push(vscode.commands.registerCommand(`bookmark.${id}`, fn));
+    ctx.subscriptions.push(vscode.commands.registerCommand(`hashmark.${id}`, fn));
 
   reg('add', async () => {
     const at = here();
@@ -183,7 +183,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
     fileWatch?.dispose();
     fileWatch = undefined;
     const folder = vscode.workspace.workspaceFolders?.[0];
-    const wantFile = vscode.workspace.getConfiguration('bookmark').get<boolean>('saveToFile', false);
+    const wantFile = vscode.workspace.getConfiguration('hashmark').get<boolean>('saveToFile', false);
     if (!wantFile || !folder) {
       store.setBackend(memento);
       await store.save(store.all());
@@ -192,7 +192,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
     const file = new FileStorage(vscode.Uri.joinPath(folder.uri, '.vscode', 'bookmarks.json'));
     const warn = (err: unknown) =>
       void vscode.window.showWarningMessage(
-        `Bookmark: .vscode/bookmarks.json is invalid (${err}). Keeping current bookmarks.`,
+        `Hashmark: .vscode/bookmarks.json is invalid (${err}). Keeping current bookmarks.`,
       );
     try {
       const existing = await file.read();
@@ -213,7 +213,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
   ctx.subscriptions.push(
     { dispose: () => fileWatch?.dispose() },
     vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration('bookmark.saveToFile')) {
+      if (e.affectsConfiguration('hashmark.saveToFile')) {
         void applyStorage();
       }
     }),
@@ -224,7 +224,7 @@ export async function activate(ctx: vscode.ExtensionContext): Promise<Api> {
       const migrated = l.map((b) => ({ ...b, file: toKey(toUri(b.file)) }));
       return migrated.some((b, i) => b.file !== l[i]?.file) ? migrated : l;
     })
-    .catch((err) => console.error('Bookmark: migrating stored paths failed', err));
+    .catch((err) => console.error('Hashmark: migrating stored paths failed', err));
   void store.refreshMissing();
 
   registerGutter(ctx, store);

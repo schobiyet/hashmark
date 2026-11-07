@@ -3,15 +3,15 @@ import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
 import * as vscode from 'vscode';
 import type { Api } from '../../extension';
 import { displayPath, toKey, toUri } from '../../paths';
-import { mementoStorage } from '../../storage';
+import { mementoStorage, STATE_KEY } from '../../storage';
 import { Store } from '../../store';
 import type { Node } from '../../tree';
 import { type FakePick, lastPick, moveCursor, must, restoreQuickPick, until, useQuickPick } from './helpers';
 
-const EXT_ID = 'schobiyet.bookmark';
-const run = (cmd: string, ...args: unknown[]) => vscode.commands.executeCommand(`bookmark.${cmd}`, ...args);
+const EXT_ID = 'schobiyet.hashmark';
+const run = (cmd: string, ...args: unknown[]) => vscode.commands.executeCommand(`hashmark.${cmd}`, ...args);
 
-describe('Bookmark extension', () => {
+describe('Hashmark extension', () => {
   let api: Api;
   let doc: vscode.TextDocument;
 
@@ -61,7 +61,7 @@ describe('Bookmark extension', () => {
       'clearFilter',
       'removeMissing',
     ]) {
-      assert.ok(all.includes(`bookmark.${c}`), c);
+      assert.ok(all.includes(`hashmark.${c}`), c);
     }
   });
 
@@ -349,7 +349,7 @@ describe('Bookmark extension', () => {
     it('reads state saved before the uri -> file rename', () => {
       const memento = mementoStorage(
         fakeState({
-          bookmark: [{ id: '1', uri: 'a.ts', line: 3, note: 'old #x' }],
+          [STATE_KEY]: [{ id: '1', uri: 'a.ts', line: 3, note: 'old #x' }],
         }),
       );
       assert.deepEqual(memento.read(), [{ id: '1', file: 'a.ts', line: 3, note: 'old #x' }]);
@@ -359,7 +359,7 @@ describe('Bookmark extension', () => {
   describe('file storage (.vscode/bookmarks.json)', () => {
     const dir = () => vscode.Uri.joinPath(doc.uri, '..', '.vscode');
     const file = () => vscode.Uri.joinPath(dir(), 'bookmarks.json');
-    const config = () => vscode.workspace.getConfiguration('bookmark');
+    const config = () => vscode.workspace.getConfiguration('hashmark');
     const readFile = async () => new TextDecoder().decode(await vscode.workspace.fs.readFile(file()));
     const writeFile = async (text: string) => {
       await vscode.workspace.fs.createDirectory(dir());

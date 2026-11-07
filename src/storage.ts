@@ -6,7 +6,7 @@ export interface Backend {
   write(list: Bookmark[]): Thenable<void>;
 }
 
-const STATE_KEY = 'bookmark';
+export const STATE_KEY = 'hashmark';
 
 export function mementoStorage(state: vscode.Memento) {
   return {

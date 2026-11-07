@@ -1,6 +1,6 @@
 {
-  "name": "bookmark",
-  "displayName": "Bookmark",
+  "name": "hashmark",
+  "displayName": "Hashmark",
   "description": "Bookmark lines of code with notes and #tags. Browse, filter and search your bookmarks by tag.",
   "version": "0.1.0",
   "publisher": "schobiyet",
@@ -15,84 +15,84 @@
   "contributes": {
     "commands": [
       {
-        "command": "bookmark.add",
+        "command": "hashmark.add",
         "title": "Add Bookmark",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(add)"
       },
       {
-        "command": "bookmark.toggle",
+        "command": "hashmark.toggle",
         "title": "Toggle Bookmark",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(bookmark)"
       },
       {
-        "command": "bookmark.remove",
+        "command": "hashmark.remove",
         "title": "Remove Bookmark",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(trash)"
       },
       {
-        "command": "bookmark.edit",
+        "command": "hashmark.edit",
         "title": "Edit Note / Tags",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(edit)"
       },
       {
-        "command": "bookmark.filter",
+        "command": "hashmark.filter",
         "title": "Filter by Tag / Text",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(filter)"
       },
       {
-        "command": "bookmark.clearFilter",
+        "command": "hashmark.clearFilter",
         "title": "Clear Filter",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(clear-all)"
       },
       {
-        "command": "bookmark.search",
+        "command": "hashmark.search",
         "title": "Search Bookmarks",
-        "category": "Bookmark",
+        "category": "Hashmark",
         "icon": "$(search)"
       },
       {
-        "command": "bookmark.removeMissing",
+        "command": "hashmark.removeMissing",
         "title": "Remove Bookmarks of Missing Files",
-        "category": "Bookmark"
+        "category": "Hashmark"
       },
       {
-        "command": "bookmark.next",
+        "command": "hashmark.next",
         "title": "Next Bookmark in File",
-        "category": "Bookmark"
+        "category": "Hashmark"
       },
       {
-        "command": "bookmark.previous",
+        "command": "hashmark.previous",
         "title": "Previous Bookmark in File",
-        "category": "Bookmark"
+        "category": "Hashmark"
       }
     ],
     "keybindings": [
       {
-        "command": "bookmark.add",
+        "command": "hashmark.add",
         "key": "ctrl+alt+k",
         "mac": "cmd+alt+k",
         "when": "editorTextFocus"
       },
       {
-        "command": "bookmark.toggle",
+        "command": "hashmark.toggle",
         "key": "ctrl+alt+l",
         "mac": "cmd+alt+l",
         "when": "editorTextFocus"
       },
       {
-        "command": "bookmark.next",
+        "command": "hashmark.next",
         "key": "ctrl+alt+.",
         "mac": "cmd+alt+.",
         "when": "editorTextFocus"
       },
       {
-        "command": "bookmark.previous",
+        "command": "hashmark.previous",
         "key": "ctrl+alt+,",
         "mac": "cmd+alt+,",
         "when": "editorTextFocus"
@@ -101,16 +101,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "bookmark",
+          "id": "hashmark",
           "title": "Bookmarks",
           "icon": "resources/bookmark.svg"
         }
       ]
     },
     "views": {
-      "bookmark": [
+      "hashmark": [
         {
-          "id": "bookmark.view",
+          "id": "hashmark.view",
           "name": "Bookmarks"
         }
       ]
@@ -118,63 +118,63 @@
     "menus": {
       "editor/lineNumber/context": [
         {
-          "command": "bookmark.toggle",
+          "command": "hashmark.toggle",
           "group": "bookmarks@1"
         },
         {
-          "command": "bookmark.add",
+          "command": "hashmark.add",
           "group": "bookmarks@2"
         }
       ],
       "view/title": [
         {
-          "command": "bookmark.search",
-          "when": "view == bookmark.view",
+          "command": "hashmark.search",
+          "when": "view == hashmark.view",
           "group": "navigation@1"
         },
         {
-          "command": "bookmark.filter",
-          "when": "view == bookmark.view",
+          "command": "hashmark.filter",
+          "when": "view == hashmark.view",
           "group": "navigation@2"
         },
         {
-          "command": "bookmark.clearFilter",
-          "when": "view == bookmark.view",
+          "command": "hashmark.clearFilter",
+          "when": "view == hashmark.view",
           "group": "navigation@3"
         },
         {
-          "command": "bookmark.removeMissing",
-          "when": "view == bookmark.view",
+          "command": "hashmark.removeMissing",
+          "when": "view == hashmark.view",
           "group": "1_cleanup"
         }
       ],
       "view/item/context": [
         {
-          "command": "bookmark.edit",
-          "when": "view == bookmark.view && viewItem == bookmark",
+          "command": "hashmark.edit",
+          "when": "view == hashmark.view && viewItem == bookmark",
           "group": "inline"
         },
         {
-          "command": "bookmark.remove",
-          "when": "view == bookmark.view && viewItem == bookmark",
+          "command": "hashmark.remove",
+          "when": "view == hashmark.view && viewItem == bookmark",
           "group": "inline"
         }
       ],
       "commandPalette": [
         {
-          "command": "bookmark.edit",
+          "command": "hashmark.edit",
           "when": "false"
         },
         {
-          "command": "bookmark.remove",
+          "command": "hashmark.remove",
           "when": "false"
         }
       ]
     },
     "configuration": {
-      "title": "Bookmark",
+      "title": "Hashmark",
       "properties": {
-        "bookmark.saveToFile": {
+        "hashmark.saveToFile": {
           "type": "boolean",
           "default": false,
           "description": "Save bookmarks to .vscode/bookmarks.json in the first workspace folder, so they can be committed and shared. When off, bookmarks stay inside VS Code on this machine. Turning it on loads an existing file if there is one; otherwise your current bookmarks are written to it."

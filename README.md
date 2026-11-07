@@ -1,4 +1,4 @@
-# Bookmark
+# Hashmark
 
 Bookmark lines of code, add a note, and tag it with `#tags`. Then browse, filter and search your bookmarks by tag.
 
@@ -13,20 +13,20 @@ Bookmark lines of code, add a note, and tag it with `#tags`. Then browse, filter
 - **Next / previous bookmark.** Jump between the bookmarks of the current file, wrapping at the ends.
 - **Bookmarks follow your edits.** Insert or delete lines above a bookmark and it moves with its code. Pressing Enter at the start of a bookmarked line moves it down with its text. Deleting a bookmarked line removes the bookmark.
 - **Renames and deletes.** Renaming a file or folder in VS Code updates its bookmarks. Bookmarks whose file no longer exists get a warning icon, and one command removes them all.
-- **Share with your team (optional).** Turn on `bookmark.saveToFile` to keep bookmarks in `.vscode/bookmarks.json` and commit them.
+- **Share with your team (optional).** Turn on `hashmark.saveToFile` to keep bookmarks in `.vscode/bookmarks.json` and commit them.
 
 ## Commands and keys
 
 | Command | Key (macOS / other) |
 | --- | --- |
-| Bookmark: Toggle Bookmark | `Cmd+Alt+L` / `Ctrl+Alt+L` |
-| Bookmark: Add Bookmark (with note) | `Cmd+Alt+K` / `Ctrl+Alt+K` |
-| Bookmark: Next Bookmark in File | `Cmd+Alt+.` / `Ctrl+Alt+.` |
-| Bookmark: Previous Bookmark in File | `Cmd+Alt+,` / `Ctrl+Alt+,` |
-| Bookmark: Search Bookmarks | sidebar title button |
-| Bookmark: Filter by Tag / Text | sidebar title button |
-| Bookmark: Clear Filter | sidebar title button |
-| Bookmark: Remove Bookmarks of Missing Files | sidebar `…` menu |
+| Hashmark: Toggle Bookmark | `Cmd+Alt+L` / `Ctrl+Alt+L` |
+| Hashmark: Add Bookmark (with note) | `Cmd+Alt+K` / `Ctrl+Alt+K` |
+| Hashmark: Next Bookmark in File | `Cmd+Alt+.` / `Ctrl+Alt+.` |
+| Hashmark: Previous Bookmark in File | `Cmd+Alt+,` / `Ctrl+Alt+,` |
+| Hashmark: Search Bookmarks | sidebar title button |
+| Hashmark: Filter by Tag / Text | sidebar title button |
+| Hashmark: Clear Filter | sidebar title button |
+| Hashmark: Remove Bookmarks of Missing Files | sidebar `…` menu |
 
 Right-click a line number to toggle or add a bookmark there. In the sidebar, hover a bookmark for the edit and remove buttons.
 
@@ -34,11 +34,11 @@ Right-click a line number to toggle or add a bookmark there. In the sidebar, hov
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `bookmark.saveToFile` | `false` | Save bookmarks to `.vscode/bookmarks.json` in the first workspace folder instead of inside VS Code. Turning it on loads the file if it exists; otherwise your current bookmarks are written to it. An invalid file is never overwritten. |
+| `hashmark.saveToFile` | `false` | Save bookmarks to `.vscode/bookmarks.json` in the first workspace folder instead of inside VS Code. Turning it on loads the file if it exists; otherwise your current bookmarks are written to it. An invalid file is never overwritten. |
 
 ## Saving and sharing
 
-By default bookmarks are private to you and this workspace, stored inside VS Code. With `bookmark.saveToFile` on, they live in `.vscode/bookmarks.json`:
+By default bookmarks are private to you and this workspace, stored inside VS Code. With `hashmark.saveToFile` on, they live in `.vscode/bookmarks.json`:
 
 ```json
 {
