@@ -1,0 +1,11 @@
+src/**
+.vscode/**
+.vscode-test/**
+.claude/**
+out/test/**
+out/**/*.map
+tsconfig.json
+.gitignore
+biome.json
+resources/icon.svg
+.github/**

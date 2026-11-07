@@ -1,0 +1,83 @@
+import * as vscode from 'vscode';
+import { type Bookmark, filterBookmarks } from './model';
+import { toUri } from './paths';
+import type { Backend } from './storage';
+
+export class Store {
+  private filter = '';
+  private missing = new Set<string>();
+  private emitter = new vscode.EventEmitter<void>();
+  readonly onChange = this.emitter.event;
+
+  constructor(
+    private list: Bookmark[],
+    private backend: Backend,
+  ) {}
+
+  dispose() {
+    this.emitter.dispose();
+  }
+
+  setBackend(b: Backend) {
+    this.backend = b;
+  }
+
+  replace(list: Bookmark[]) {
+    this.list = list;
+    this.emitter.fire();
+    void this.refreshMissing();
+  }
+
+  all(): Bookmark[] {
+    return this.list;
+  }
+  filtered(): Bookmark[] {
+    return filterBookmarks(this.list, this.filter);
+  }
+  getFilter(): string {
+    return this.filter;
+  }
+  isMissing(key: string): boolean {
+    return this.missing.has(key);
+  }
+
+  async refreshMissing() {
+    const gone = new Set<string>();
+    await Promise.all(
+      [...new Set(this.list.map((b) => b.file))].map(async (key) => {
+        const uri = toUri(key);
+        if (uri.scheme !== 'file') {
+          return;
+        }
+        try {
+          await vscode.workspace.fs.stat(uri);
+        } catch {
+          gone.add(key);
+        }
+      }),
+    );
+    if (gone.size !== this.missing.size || [...gone].some((k) => !this.missing.has(k))) {
+      this.missing = gone;
+      this.emitter.fire();
+    }
+  }
+
+  setFilter(f: string) {
+    this.filter = f.trim();
+    this.emitter.fire();
+  }
+
+  async update(change: (list: Bookmark[]) => Bookmark[]) {
+    const next = change(this.list);
+    if (next !== this.list) {
+      await this.save(next);
+    }
+  }
+
+  async save(list: Bookmark[]) {
+    this.list = list;
+    await this.backend.write(list);
+    this.emitter.fire();
+    await this.refreshMissing();
+  }
+}

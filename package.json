@@ -1,0 +1,230 @@
+{
+  "name": "bookmark",
+  "displayName": "Bookmark",
+  "description": "Bookmark lines of code with notes and #tags. Browse, filter and search your bookmarks by tag.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "bookmark.add",
+        "title": "Add Bookmark",
+        "category": "Bookmark",
+        "icon": "$(add)"
+      },
+      {
+        "command": "bookmark.toggle",
+        "title": "Toggle Bookmark",
+        "category": "Bookmark",
+        "icon": "$(bookmark)"
+      },
+      {
+        "command": "bookmark.remove",
+        "title": "Remove Bookmark",
+        "category": "Bookmark",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "bookmark.edit",
+        "title": "Edit Note / Tags",
+        "category": "Bookmark",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "bookmark.filter",
+        "title": "Filter by Tag / Text",
+        "category": "Bookmark",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "bookmark.clearFilter",
+        "title": "Clear Filter",
+        "category": "Bookmark",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "bookmark.search",
+        "title": "Search Bookmarks",
+        "category": "Bookmark",
+        "icon": "$(search)"
+      },
+      {
+        "command": "bookmark.removeMissing",
+        "title": "Remove Bookmarks of Missing Files",
+        "category": "Bookmark"
+      },
+      {
+        "command": "bookmark.next",
+        "title": "Next Bookmark in File",
+        "category": "Bookmark"
+      },
+      {
+        "command": "bookmark.previous",
+        "title": "Previous Bookmark in File",
+        "category": "Bookmark"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "bookmark.add",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "bookmark.toggle",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "bookmark.next",
+        "key": "ctrl+alt+.",
+        "mac": "cmd+alt+.",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "bookmark.previous",
+        "key": "ctrl+alt+,",
+        "mac": "cmd+alt+,",
+        "when": "editorTextFocus"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bookmark",
+          "title": "Bookmarks",
+          "icon": "resources/bookmark.svg"
+        }
+      ]
+    },
+    "views": {
+      "bookmark": [
+        {
+          "id": "bookmark.view",
+          "name": "Bookmarks"
+        }
+      ]
+    },
+    "menus": {
+      "editor/lineNumber/context": [
+        {
+          "command": "bookmark.toggle",
+          "group": "bookmarks@1"
+        },
+        {
+          "command": "bookmark.add",
+          "group": "bookmarks@2"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "bookmark.search",
+          "when": "view == bookmark.view",
+          "group": "navigation@1"
+        },
+        {
+          "command": "bookmark.filter",
+          "when": "view == bookmark.view",
+          "group": "navigation@2"
+        },
+        {
+          "command": "bookmark.clearFilter",
+          "when": "view == bookmark.view",
+          "group": "navigation@3"
+        },
+        {
+          "command": "bookmark.removeMissing",
+          "when": "view == bookmark.view",
+          "group": "1_cleanup"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "bookmark.edit",
+          "when": "view == bookmark.view && viewItem == bookmark",
+          "group": "inline"
+        },
+        {
+          "command": "bookmark.remove",
+          "when": "view == bookmark.view && viewItem == bookmark",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "bookmark.edit",
+          "when": "false"
+        },
+        {
+          "command": "bookmark.remove",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Bookmark",
+      "properties": {
+        "bookmark.saveToFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Save bookmarks to .vscode/bookmarks.json in the first workspace folder, so they can be committed and shared. When off, bookmarks stay inside VS Code on this machine. Turning it on loads an existing file if there is one; otherwise your current bookmarks are written to it."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "npm run clean && tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test:unit": "npm run compile && node --test out/test/model.test.js",
+    "test:integration": "npm run compile && node out/test/runIntegration.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "clean": "node -e \"require('fs').rmSync('out',{recursive:true,force:true})\"",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.6",
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.0",
+    "typescript": "^7.0.2"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "bookmark",
+    "bookmarks",
+    "tags",
+    "tag",
+    "notes",
+    "navigation",
+    "productivity",
+    "search",
+    "filter",
+    "todo",
+    "jump",
+    "line"
+  ],
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#1f2430",
+    "theme": "dark"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  }
+}
