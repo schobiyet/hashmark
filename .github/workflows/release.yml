@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write # lets the job get the OIDC token the Marketplace trusts
 
 jobs:
   release:
@@ -35,13 +36,14 @@ jobs:
           files: "*.vsix"
           generate_release_notes: true
 
-      # Publishing runs only when the secret exists, so the workflow works before you set them up.
+      # Marketplace: Trusted Publishing (OIDC), no token stored. Needs a policy for this repo and
+      # workflow (release.yml) on the publisher's Trusted Publishing page, then the repository
+      # variable MARKETPLACE_OIDC set to "true" (Settings > Secrets and variables > Actions > Variables).
       - name: Publish to the VS Code Marketplace
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-        if: env.VSCE_PAT != ''
-        run: npx vsce publish --packagePath *.vsix
+        if: vars.MARKETPLACE_OIDC == 'true'
+        run: npx vsce publish --oidc --packagePath *.vsix
 
+      # Open VSX has no OIDC yet: it still uses a token, and runs only when the secret exists.
       - name: Publish to Open VSX
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
