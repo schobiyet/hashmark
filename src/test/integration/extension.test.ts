@@ -67,6 +67,11 @@ describe('Hashmark extension', () => {
     }
   });
 
+  it('starts with VS Code, so gutter icons and edit tracking work before any command runs', () => {
+    const { activationEvents } = must(vscode.extensions.getExtension(EXT_ID)).packageJSON;
+    assert.deepEqual(activationEvents, ['onStartupFinished']);
+  });
+
   it('adds a bookmark and groups it under each tag', async () => {
     await bookmarkAt(1, 'check #todo #bug');
     assert.equal(api.store.all().length, 1);
