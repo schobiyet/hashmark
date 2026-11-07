@@ -8,7 +8,7 @@ import { Store } from '../../store';
 import type { Node } from '../../tree';
 import { type FakePick, lastPick, moveCursor, must, restoreQuickPick, until, useQuickPick } from './helpers';
 
-const EXT_ID = 'local.bookmark';
+const EXT_ID = 'schobiyet.bookmark';
 const run = (cmd: string, ...args: unknown[]) => vscode.commands.executeCommand(`bookmark.${cmd}`, ...args);
 
 describe('Bookmark extension', () => {

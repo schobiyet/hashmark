@@ -3,7 +3,7 @@
   "displayName": "Bookmark",
   "description": "Bookmark lines of code with notes and #tags. Browse, filter and search your bookmarks by tag.",
   "version": "0.1.0",
-  "publisher": "local",
+  "publisher": "schobiyet",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -192,7 +192,7 @@
     "format": "biome check --write .",
     "clean": "node -e \"require('fs').rmSync('out',{recursive:true,force:true})\"",
     "vscode:prepublish": "npm run compile",
-    "package": "vsce package --allow-missing-repository"
+    "package": "vsce package"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.6",
@@ -203,6 +203,14 @@
     "typescript": "^7.0.2"
   },
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schobiyet/bookmark.git"
+  },
+  "bugs": {
+    "url": "https://github.com/schobiyet/bookmark/issues"
+  },
+  "homepage": "https://github.com/schobiyet/bookmark#readme",
   "keywords": [
     "bookmark",
     "bookmarks",
