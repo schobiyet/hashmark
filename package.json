@@ -205,12 +205,12 @@
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/schobiyet/bookmark.git"
+    "url": "https://github.com/schobiyet/hashmark.git"
   },
   "bugs": {
-    "url": "https://github.com/schobiyet/bookmark/issues"
+    "url": "https://github.com/schobiyet/hashmark/issues"
   },
-  "homepage": "https://github.com/schobiyet/bookmark#readme",
+  "homepage": "https://github.com/schobiyet/hashmark#readme",
   "keywords": [
     "bookmark",
     "bookmarks",
