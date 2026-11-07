@@ -6,14 +6,14 @@ export function must<T>(value: T | undefined | null, what = 'value'): T {
   return value;
 }
 
-export async function until(cond: () => boolean | Promise<boolean>, ms = 4000) {
+export async function until(cond: () => boolean | PromiseLike<boolean>, what = 'condition', ms = 4000) {
   for (let t = 0; t < ms; t += 50) {
     if (await cond()) {
       return;
     }
     await new Promise((r) => setTimeout(r, 50));
   }
-  assert.fail('timed out waiting for condition');
+  assert.fail(`timed out waiting for ${what}`);
 }
 
 export async function moveCursor(doc: vscode.TextDocument, line: number) {

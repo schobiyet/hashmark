@@ -7,19 +7,17 @@ export class Store {
   private filter = '';
   private missing = new Set<string>();
   private emitter = new vscode.EventEmitter<void>();
+  private failing = false;
   readonly onChange = this.emitter.event;
 
   constructor(
     private list: Bookmark[],
-    private backend: Backend,
+    private readonly backend: Backend,
+    private readonly onSaveError: (err: unknown) => void = console.error,
   ) {}
 
   dispose() {
     this.emitter.dispose();
-  }
-
-  setBackend(b: Backend) {
-    this.backend = b;
   }
 
   replace(list: Bookmark[]) {
@@ -76,7 +74,15 @@ export class Store {
 
   async save(list: Bookmark[]) {
     this.list = list;
-    await this.backend.write(list);
+    try {
+      await this.backend.write(list);
+      this.failing = false;
+    } catch (err) {
+      if (!this.failing) {
+        this.failing = true;
+        this.onSaveError(err);
+      }
+    }
     this.emitter.fire();
     await this.refreshMissing();
   }

@@ -31,14 +31,21 @@ export function filterBookmarks(list: Bookmark[], filter: string): Bookmark[] {
   });
 }
 
-export function groupByTag(list: Bookmark[]): [string, Bookmark[]][] {
-  const groups = new Map<string, Bookmark[]>();
+export function groupBy<K>(list: Bookmark[], keysOf: (b: Bookmark) => K[]): Map<K, Bookmark[]> {
+  const groups = new Map<K, Bookmark[]>();
   for (const b of list) {
-    const tags = tagsOf(b.note);
-    for (const t of tags.length ? tags : [UNTAGGED]) {
-      groups.set(t, [...(groups.get(t) ?? []), b]);
+    for (const key of keysOf(b)) {
+      groups.set(key, [...(groups.get(key) ?? []), b]);
     }
   }
+  return groups;
+}
+
+export function groupByTag(list: Bookmark[]): [string, Bookmark[]][] {
+  const groups = groupBy(list, (b) => {
+    const tags = tagsOf(b.note);
+    return tags.length ? tags : [UNTAGGED];
+  });
   return [...groups].sort(([a], [b]) => a.localeCompare(b));
 }
 

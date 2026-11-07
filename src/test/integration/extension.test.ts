@@ -2,8 +2,8 @@ import * as assert from 'node:assert/strict';
 import { after, afterEach, before, beforeEach, describe, it } from 'node:test';
 import * as vscode from 'vscode';
 import type { Api } from '../../extension';
-import { displayPath, toKey, toUri } from '../../paths';
-import { mementoStorage, STATE_KEY } from '../../storage';
+import { displayPath, fromRelative, migrateKey, toKey, toRelative, toUri } from '../../paths';
+import { Persistence } from '../../storage';
 import { Store } from '../../store';
 import type { Node } from '../../tree';
 import { type FakePick, lastPick, moveCursor, must, restoreQuickPick, until, useQuickPick } from './helpers';
@@ -33,6 +33,8 @@ describe('Hashmark extension', () => {
   const roots = () => api.tree.getChildren() as Extract<Node, { kind: 'tag' }>[];
   const firstLeaf = () => must(api.tree.getChildren(must(roots()[0]))[0], 'first bookmark');
   const notes = () => api.store.all().map((b) => b.note);
+  const docKey = () => doc.uri.toString();
+  const sibling = (name: string) => vscode.Uri.joinPath(doc.uri, '..', name).toString();
   const bookmarkIn = (line: number) => api.store.all().find((b) => b.line === line);
 
   before(async () => {
@@ -189,22 +191,26 @@ describe('Hashmark extension', () => {
     await vscode.commands.executeCommand('workbench.action.files.revert');
   });
 
-  it('stores workspace-relative keys and resolves them back, including legacy absolute URIs', () => {
-    assert.equal(toKey(doc.uri), 'sample.txt');
-    assert.equal(toUri('sample.txt').toString(), doc.uri.toString());
-    assert.equal(toUri(doc.uri.toString()).toString(), doc.uri.toString()); // legacy key
+  it('keys are full URIs; relative paths only exist below a folder', () => {
+    const folder = vscode.Uri.joinPath(doc.uri, '..');
+    assert.equal(toKey(doc.uri), doc.uri.toString());
+    assert.equal(toUri(toKey(doc.uri)).toString(), doc.uri.toString());
     assert.equal(toKey(vscode.Uri.file('/somewhere/else.txt')), 'file:///somewhere/else.txt');
     assert.equal(toKey(vscode.Uri.parse('untitled:Untitled-1')), 'untitled:Untitled-1');
-    assert.equal(displayPath('sample.txt'), 'sample.txt');
+    assert.equal(toRelative(folder, docKey()), 'sample.txt');
+    assert.equal(fromRelative(folder, 'sample.txt'), docKey());
+    const spaced = fromRelative(folder, 'my dir/a b.txt');
+    assert.equal(toRelative(folder, spaced), 'my dir/a b.txt');
+    assert.equal(displayPath(docKey()), 'sample.txt');
   });
 
   it('flags bookmarks of missing files and removeMissing deletes only those', async () => {
     await api.store.save([
-      { id: '1', file: 'sample.txt', line: 0, note: 'ok #x' },
-      { id: '2', file: 'gone.txt', line: 0, note: 'lost #x' },
+      { id: '1', file: docKey(), line: 0, note: 'ok #x' },
+      { id: '2', file: sibling('gone.txt'), line: 0, note: 'lost #x' },
     ]);
-    assert.equal(api.store.isMissing('gone.txt'), true);
-    assert.equal(api.store.isMissing('sample.txt'), false);
+    assert.equal(api.store.isMissing(sibling('gone.txt')), true);
+    assert.equal(api.store.isMissing(docKey()), false);
     const items = api.tree.getChildren(must(roots()[0])).map((n) => api.tree.getTreeItem(n));
     const lost = must(items.find((i) => i.label === 'lost #x'));
     assert.match(String(lost.description), /\(file missing\)$/);
@@ -213,7 +219,7 @@ describe('Hashmark extension', () => {
     await run('removeMissing');
     assert.deepEqual(
       api.store.all().map((b) => b.file),
-      ['sample.txt'],
+      [docKey()],
     );
   });
 
@@ -224,14 +230,14 @@ describe('Hashmark extension', () => {
     create.createFile(a, { ignoreIfExists: true });
     await vscode.workspace.applyEdit(create);
     try {
-      await api.store.save([{ id: '1', file: 'tmp-a.txt', line: 0, note: 'moving' }]);
-      assert.equal(api.store.isMissing('tmp-a.txt'), false);
+      await api.store.save([{ id: '1', file: sibling('tmp-a.txt'), line: 0, note: 'moving' }]);
+      assert.equal(api.store.isMissing(sibling('tmp-a.txt')), false);
 
       const rename = new vscode.WorkspaceEdit();
       rename.renameFile(a, b);
       await vscode.workspace.applyEdit(rename);
-      await until(() => api.store.all()[0]?.file === 'tmp-b.txt');
-      assert.equal(api.store.isMissing('tmp-b.txt'), false);
+      await until(() => api.store.all()[0]?.file === sibling('tmp-b.txt'));
+      assert.equal(api.store.isMissing(sibling('tmp-b.txt')), false);
     } finally {
       await vscode.workspace.fs.delete(a).then(undefined, () => {});
       await vscode.workspace.fs.delete(b).then(undefined, () => {});
@@ -270,8 +276,8 @@ describe('Hashmark extension', () => {
 
     beforeEach(async () => {
       await api.store.save([
-        { id: '1', file: 'sample.txt', line: 0, note: 'a #bug #todo' },
-        { id: '2', file: 'sample.txt', line: 1, note: 'b #todo' },
+        { id: '1', file: docKey(), line: 0, note: 'a #bug #todo' },
+        { id: '2', file: docKey(), line: 1, note: 'b #todo' },
       ]);
     });
 
@@ -281,7 +287,7 @@ describe('Hashmark extension', () => {
         assert.deepEqual(labels(), ['#todo']);
         assert.equal(must(p.items[0]).description, '2 bookmarks');
         assert.equal(must(p.items[0]).alwaysShow, true);
-        assert.deepEqual(p.activeItems, []); // plain Enter must not pick a suggestion
+        assert.deepEqual(p.activeItems, []);
         p.type('fix #todo ');
         assert.deepEqual(labels(), []);
         p.hide();
@@ -300,7 +306,7 @@ describe('Hashmark extension', () => {
           hidden = true;
           realHide();
         };
-        p.accept(); // second Enter saves
+        p.accept();
       });
       assert.equal(hidden, true);
       assert.equal(bookmarkIn(2)?.note, 'fix #bug');
@@ -327,6 +333,34 @@ describe('Hashmark extension', () => {
     });
   });
 
+  describe('a failing write', () => {
+    it('is reported once per streak and never throws into the caller', async () => {
+      let failing = true;
+      const errors: unknown[] = [];
+      const store = new Store(
+        [],
+        {
+          write: async () => {
+            if (failing) {
+              throw new Error('disk full');
+            }
+          },
+        },
+        (err) => errors.push(err),
+      );
+      await store.save([{ id: '1', file: docKey(), line: 0, note: 'a' }]);
+      await store.save([{ id: '2', file: docKey(), line: 1, note: 'b' }]);
+      assert.equal(errors.length, 1, 'two failures in a row are reported once');
+      assert.equal(store.all().length, 1, 'the list in memory still updates');
+
+      failing = false;
+      await store.save([]);
+      failing = true;
+      await store.save([]);
+      assert.equal(errors.length, 2, 'a new failure after a success is reported again');
+    });
+  });
+
   describe('persistence', () => {
     const fakeState = (initial: Record<string, unknown> = {}) => {
       const saved = new Map(Object.entries(initial));
@@ -339,20 +373,29 @@ describe('Hashmark extension', () => {
       };
     };
 
-    it('persists bookmarks across a store reload', async () => {
-      await bookmarkAt(0, 'keep #me');
-      const memento = mementoStorage(fakeState());
-      await new Store([], memento).save(api.store.all());
-      assert.equal(new Store(memento.read(), memento).all()[0]?.note, 'keep #me');
+    it('reads the workspace-relative paths that version 0.1.0 stored', () => {
+      assert.equal(migrateKey('sample.txt'), docKey());
+      assert.equal(migrateKey(docKey()), docKey()); // already a URI
+      assert.equal(migrateKey('untitled:Untitled-1'), 'untitled:Untitled-1');
+      const old = new Persistence(
+        fakeState({
+          hashmark: [{ id: '1', file: 'sample.txt', line: 2, note: 'old #x' }],
+        }),
+        () => {},
+        () => {},
+      );
+      assert.deepEqual(old.readMemento(), [{ id: '1', file: docKey(), line: 2, note: 'old #x' }]);
     });
 
-    it('reads state saved before the uri -> file rename', () => {
-      const memento = mementoStorage(
-        fakeState({
-          [STATE_KEY]: [{ id: '1', uri: 'a.ts', line: 3, note: 'old #x' }],
-        }),
+    it('persists bookmarks across a store reload', async () => {
+      await bookmarkAt(0, 'keep #me');
+      const persistence = new Persistence(
+        fakeState(),
+        () => {},
+        () => {},
       );
-      assert.deepEqual(memento.read(), [{ id: '1', file: 'a.ts', line: 3, note: 'old #x' }]);
+      await new Store([], persistence).save(api.store.all());
+      assert.equal(new Store(persistence.readMemento(), persistence).all()[0]?.note, 'keep #me');
     });
   });
 

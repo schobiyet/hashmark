@@ -177,7 +177,8 @@
         "hashmark.saveToFile": {
           "type": "boolean",
           "default": false,
-          "description": "Save bookmarks to .vscode/bookmarks.json in the first workspace folder, so they can be committed and shared. When off, bookmarks stay inside VS Code on this machine. Turning it on loads an existing file if there is one; otherwise your current bookmarks are written to it."
+          "description": "Save this workspace folder's bookmarks to .vscode/bookmarks.json inside the folder, so they can be committed and shared. When off, they stay inside VS Code on this machine. Turning it on loads an existing file if there is one; otherwise the current bookmarks are written to it. A folder with an invalid file is never overwritten. Can be set per folder.",
+          "scope": "resource"
         }
       }
     }
@@ -185,7 +186,7 @@
   "scripts": {
     "compile": "npm run clean && tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "test:unit": "npm run compile && node --test out/test/model.test.js",
+    "test:unit": "npm run compile && node --test \"out/test/*.test.js\"",
     "test:integration": "npm run compile && node out/test/runIntegration.js",
     "test": "npm run test:unit && npm run test:integration",
     "lint": "biome check .",
