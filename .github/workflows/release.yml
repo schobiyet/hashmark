@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  id-token: write # lets the job get the OIDC token the Marketplace trusts
+  id-token: write # lets the job get the OIDC token the registries trust
 
 jobs:
   release:
@@ -50,9 +50,9 @@ jobs:
         if: vars.MARKETPLACE_OIDC == 'true'
         run: npx vsce publish --oidc --packagePath *.vsix
 
-      # Open VSX has no OIDC yet: it still uses a token, and runs only when the secret exists.
+      # Open VSX: Trusted Publishing (OIDC), no token stored. Needs a trusted publisher registered
+      # for the extension (open-vsx.org > Settings > Trusted Publishers: this repo + release.yml),
+      # then the repository variable OVSX_OIDC set to "true".
       - name: Publish to Open VSX
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
-        if: env.OVSX_PAT != ''
-        run: npx ovsx publish *.vsix
+        if: vars.OVSX_OIDC == 'true'
+        run: npx ovsx publish --trusted-publishing *.vsix
