@@ -50,9 +50,17 @@ jobs:
         if: vars.MARKETPLACE_OIDC == 'true'
         run: npx vsce publish --oidc --packagePath *.vsix
 
-      # Open VSX: Trusted Publishing (OIDC), no token stored. Needs a trusted publisher registered
-      # for the extension (open-vsx.org > Settings > Trusted Publishers: this repo + release.yml),
+      # Open VSX, trusted: needs a trusted publisher registered for the extension
+      # (open-vsx.org > namespace > Trusted Publishers: this repo + release.yml),
       # then the repository variable OVSX_OIDC set to "true".
-      - name: Publish to Open VSX
+      - name: Publish to Open VSX (trusted)
         if: vars.OVSX_OIDC == 'true'
         run: npx ovsx publish --trusted-publishing *.vsix
+
+      # Open VSX, token: use for the first publish, before a trusted publisher can exist.
+      # Runs only while OVSX_OIDC is not "true" and the OVSX_PAT secret exists.
+      - name: Publish to Open VSX (token)
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        if: vars.OVSX_OIDC != 'true' && env.OVSX_PAT != ''
+        run: npx ovsx publish *.vsix
