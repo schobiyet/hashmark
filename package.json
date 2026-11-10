@@ -2,7 +2,7 @@
   "name": "hashmark",
   "displayName": "Hashmark",
   "description": "Bookmark lines of code with notes and #tags. Browse, filter and search your bookmarks by tag.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "schobiyet",
   "engines": {
     "vscode": "^1.85.0"
