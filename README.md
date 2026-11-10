@@ -19,10 +19,10 @@ Bookmark lines of code, add a note, and tag it with `#tags`. Then browse, filter
 
 | Command | Key (macOS / other) |
 | --- | --- |
-| Hashmark: Toggle Bookmark | `Cmd+Alt+L` / `Ctrl+Alt+L` |
-| Hashmark: Add Bookmark (with note) | `Cmd+Alt+K` / `Ctrl+Alt+K` |
-| Hashmark: Next Bookmark in File | `Cmd+Alt+.` / `Ctrl+Alt+.` |
-| Hashmark: Previous Bookmark in File | `Cmd+Alt+,` / `Ctrl+Alt+,` |
+| Hashmark: Toggle Bookmark | `Cmd+Opt+L` / `Ctrl+Alt+L` |
+| Hashmark: Add Bookmark (with note) | `Cmd+Opt+K` / `Ctrl+Alt+K` |
+| Hashmark: Next Bookmark in File | `Cmd+Opt+.` / `Ctrl+Alt+.` |
+| Hashmark: Previous Bookmark in File | `Cmd+Opt+,` / `Ctrl+Alt+,` |
 | Hashmark: Search Bookmarks | sidebar title button |
 | Hashmark: Filter by Tag / Text | sidebar title button |
 | Hashmark: Clear Filter | sidebar title button |
